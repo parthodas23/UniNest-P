@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { FaEyeSlash } from "react-icons/fa";
 import { FaEye } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import OAuth from "../components/OAuth";
 import { doc, serverTimestamp, setDoc } from "firebase/firestore";
 import {
@@ -9,9 +9,11 @@ import {
   getAuth,
   updateProfile,
 } from "firebase/auth";
-import { db } from "../../firebase";
+import { db } from "../firebase";
+import { toast } from "react-toastify";
 
 const SignUp = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -39,14 +41,10 @@ const SignUp = () => {
       copyFormData.timestamp = serverTimestamp();
 
       await setDoc(doc(db, "users", user.uid), copyFormData);
-      console.log("Done");
+      toast.success("Sign Up was successfull");
+      navigate("/");
     } catch (err) {
-      if (err.code === "auth/email-already-in-use") {
-        alert("This email is already registered. Try logging in instead!");
-      } else {
-        alert("Something went wrong: " + err.message);
-      }
-      console.log(err);
+      toast.error("Something went wrong in registration.");
     }
   };
 
@@ -67,7 +65,7 @@ const SignUp = () => {
           />
         </div>
         <div className="md:w-[67%] lg:w-[40%] lg:ml-20">
-          <form onClick={handleSubmit}>
+          <form onSubmit={handleSubmit}>
             <input
               type="text"
               placeholder="Full Name"

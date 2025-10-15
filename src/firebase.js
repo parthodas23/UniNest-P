@@ -6,12 +6,12 @@ import { getFirestore } from "firebase/firestore";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyBZZCHmyxGKp2_XuEkIH3Efk8-bzu00ALA",
-  authDomain: "uninest-95fe6.firebaseapp.com",
-  projectId: "uninest-95fe6",
-  storageBucket: "uninest-95fe6.firebasestorage.app",
-  messagingSenderId: "649331300607",
-  appId: "1:649331300607:web:0ff891434986d78ab214ca",
+  apiKey: "AIzaSyBiKPP8Us6dzJW4z1qTIe8o56NPiYQ0sgE",
+  authDomain: "uninest-p.firebaseapp.com",
+  projectId: "uninest-p",
+  storageBucket: "uninest-p.firebasestorage.app",
+  messagingSenderId: "729054906511",
+  appId: "1:729054906511:web:87d85d4addad8c3d3288fa",
 };
 
 // Initialize Firebase

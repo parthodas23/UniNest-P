@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import { FaEyeSlash } from "react-icons/fa";
 import { FaEye } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import OAuth from "../components/OAuth";
+import { getAuth, sendPasswordResetEmail } from "firebase/auth";
+import { toast } from "react-toastify";
 
 const ForgotPassword = () => {
   const [formData, setFormData] = useState({
@@ -10,11 +12,19 @@ const ForgotPassword = () => {
     email: "",
     password: "",
   });
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const { name, email, password } = formData;
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(formData);
+    try {
+      const auth = getAuth();
+      await sendPasswordResetEmail(auth, email);
+      toast.success("Email Was Sent");
+      navigate("/sign-in");
+    } catch (error) {
+      toast.error("Something Went Wrong");
+    }
   };
 
   const handleChange = (e) => {
@@ -34,7 +44,7 @@ const ForgotPassword = () => {
           />
         </div>
         <div className="md:w-[67%] lg:w-[40%] lg:ml-20">
-          <form onClick={handleSubmit}>
+          <form onSubmit={handleSubmit}>
             <input
               type="email"
               id="email"
