@@ -3,6 +3,13 @@ import { FaEyeSlash } from "react-icons/fa";
 import { FaEye } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import OAuth from "../components/OAuth";
+import { doc, serverTimestamp, setDoc } from "firebase/firestore";
+import {
+  createUserWithEmailAndPassword,
+  getAuth,
+  updateProfile,
+} from "firebase/auth";
+import { db } from "../../firebase";
 
 const SignUp = () => {
   const [formData, setFormData] = useState({
@@ -12,9 +19,35 @@ const SignUp = () => {
   });
   const [showPassword, setShowPassword] = useState(false);
   const { name, email, password } = formData;
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(formData)
+    try {
+      const auth = getAuth();
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+
+      await updateProfile(auth.currentUser, {
+        displayName: name,
+      });
+
+      const user = userCredential.user;
+      const copyFormData = { ...formData };
+      delete copyFormData.password;
+      copyFormData.timestamp = serverTimestamp();
+
+      await setDoc(doc(db, "users", user.uid), copyFormData);
+      console.log("Done");
+    } catch (err) {
+      if (err.code === "auth/email-already-in-use") {
+        alert("This email is already registered. Try logging in instead!");
+      } else {
+        alert("Something went wrong: " + err.message);
+      }
+      console.log(err);
+    }
   };
 
   const handleChange = (e) => {
@@ -29,7 +62,7 @@ const SignUp = () => {
         <div className="md:w-[67%] lg:w-[50%] mb-12 md:mb-6 ">
           <img
             className="w-full rounded-2xl"
-            src="https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?q=80&w=780&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+            src="https://images.unsplash.com/photo-1543332164-6e82f355badc?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1170"
             alt=""
           />
         </div>
